@@ -53,10 +53,10 @@ formIdee.addEventListener("submit", (e) => {
   } else {
     hideError(document.getElementById("description"));
   }
-  if (description.length > 255) {
+  if (description.length < 50 || description.length > 255) {
     errorMessage(
         document.getElementById("description"),
-        "la description ne doit pas depassé 255 caractere"
+        "la description ne doit etre comprise entre 50 et 255 caractere"
       );
       isValid = false;
   } 
