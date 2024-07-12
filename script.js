@@ -53,6 +53,15 @@ formIdee.addEventListener("submit", (e) => {
   } else {
     hideError(document.getElementById("description"));
   }
+  if (description.length > 255) {
+    errorMessage(
+        document.getElementById("description"),
+        "la description ne doit pas depassé 255 caractere"
+      );
+      isValid = false;
+  } else {
+    hideError(document.getElementById("description"));
+  }
 
   if (!isValid) {
     displayErrorMessage("Veuillez remplir tous les champs");
@@ -60,7 +69,7 @@ formIdee.addEventListener("submit", (e) => {
   }
   if (!isValidCategory) {
     errorMessage(
-      document.getElementById("label"),
+      document.getElementById("category"),
       "Catégorie invalide. Veuillez sélectionner une catégorie valide"
     );
     return;
@@ -69,7 +78,7 @@ formIdee.addEventListener("submit", (e) => {
     label,
     category,
     description,
-    approved: false,
+    appouver: false,
     status: "En attente",
   };
 
@@ -125,7 +134,7 @@ function displayIdeas() {
   idee.forEach((idea, index) => {
     let cardClass = "";
     if (idea.status === "Approuvée") {
-      cardClass = "approved";
+      cardClass = "appouver";
     } else if (idea.status === "Désapprouvée") {
       cardClass = "disapproved";
     }
@@ -160,6 +169,7 @@ function displayIdeas() {
     icon.addEventListener("click", () => {
       const index = icon.getAttribute("data-index");
       idee[index].status = "Approuvée";
+      localStorage.setItem("ideas", JSON.stringify(idee));
       displayIdeas();
     });
   });
@@ -168,6 +178,7 @@ function displayIdeas() {
     icon.addEventListener("click", () => {
       const index = icon.getAttribute("data-index");
       idee[index].status = "Désapprouvée";
+      localStorage.setItem("ideas", JSON.stringify(idee));
       displayIdeas();
     });
   });
