@@ -59,9 +59,7 @@ formIdee.addEventListener("submit", (e) => {
         "la description ne doit pas depassé 255 caractere"
       );
       isValid = false;
-  } else {
-    hideError(document.getElementById("description"));
-  }
+  } 
 
   if (!isValid) {
     displayErrorMessage("Veuillez remplir tous les champs");
