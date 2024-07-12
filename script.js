@@ -28,7 +28,10 @@ formIdee.addEventListener("submit", (e) => {
   );
 
   if (!label) {
-    errorMessage(document.getElementById("label"), "Veuillez saisir un libellé");
+    errorMessage(
+      document.getElementById("label"),
+      "Veuillez saisir un libellé"
+    );
     isValid = false;
   } else {
     hideError(document.getElementById("label"));
@@ -44,22 +47,16 @@ formIdee.addEventListener("submit", (e) => {
     hideError(document.getElementById("category"));
   }
 
-  if (!description) {
+
+  if (description.length < 50 && description.length > 255) {
     errorMessage(
       document.getElementById("description"),
-      "Veuillez saisir une description"
+      "la description ne doit etre comprise entre 50 et 255 caractere"
     );
     isValid = false;
-  } else {
+  }else {
     hideError(document.getElementById("description"));
   }
-  if (description.length < 50 || description.length > 255) {
-    errorMessage(
-        document.getElementById("description"),
-        "la description ne doit etre comprise entre 50 et 255 caractere"
-      );
-      isValid = false;
-  } 
 
   if (!isValid) {
     displayErrorMessage("Veuillez remplir tous les champs");
@@ -89,6 +86,24 @@ formIdee.addEventListener("submit", (e) => {
   formIdee.reset();
 });
 
+// le compteur de caractere
+const descriptionInput = document.getElementById("description");
+const compteur = document.createElement("span");
+compteur.id = "character-count";
+descriptionInput.parentNode.appendChild(compteur);
+
+descriptionInput.addEventListener("input", () => {
+  const caractere = descriptionInput.value.length;
+  compteur.textContent = `${caractere} / 256`;
+  if (caractere > 254) {
+    descriptionInput.value = descriptionInput.value.substring(0, 255);
+  }
+  if (caractere >= targetNumber) {
+    displayTargetReachedMessage(`Vous avez atteint le nombre cible de ${targetNumber} caractères!`);
+  }
+});
+
+// fonction pour les messages d'erreurs
 function errorMessage(input, message) {
   input.classList.add("error");
   let errorSpan = input.nextElementSibling;
@@ -103,6 +118,8 @@ function errorMessage(input, message) {
   }, 2000);
 }
 
+
+//fonction pour caché les messages d'erreur
 function hideError(input) {
   input.classList.remove("error");
   let errorSpan = input.nextElementSibling;
