@@ -28,14 +28,14 @@ formIdee.addEventListener("submit", (e) => {
   );
 
   if (!label) {
-    showError(document.getElementById("label"), "Veuillez saisir un libellé");
+    errorMessage(document.getElementById("label"), "Veuillez saisir un libellé");
     isValid = false;
   } else {
     hideError(document.getElementById("label"));
   }
 
   if (category === "Sélectionnez une catégorie") {
-    showError(
+    errorMessage(
       document.getElementById("category"),
       "Veuillez sélectionner une catégorie"
     );
@@ -45,18 +45,9 @@ formIdee.addEventListener("submit", (e) => {
   }
 
   if (!description) {
-    showError(
+    errorMessage(
       document.getElementById("description"),
       "Veuillez saisir une description"
-    );
-    isValid = false;
-  } else {
-    hideError(document.getElementById("description"));
-  }
-  if (description.value.length > 255) {
-    showError(
-      document.getElementById("description"),
-      "La description ne doit pas dépasser 255 caractères"
     );
     isValid = false;
   } else {
@@ -68,7 +59,7 @@ formIdee.addEventListener("submit", (e) => {
     return;
   }
   if (!isValidCategory) {
-    showError(
+    errorMessage(
       document.getElementById("label"),
       "Catégorie invalide. Veuillez sélectionner une catégorie valide"
     );
@@ -91,7 +82,7 @@ formIdee.addEventListener("submit", (e) => {
   formIdee.reset();
 });
 
-function showError(input, message) {
+function errorMessage(input, message) {
   input.classList.add("error");
   let errorSpan = input.nextElementSibling;
   if (!errorSpan || !errorSpan.classList.contains("error-message")) {
