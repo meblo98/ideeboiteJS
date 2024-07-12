@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Boite à idée</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" />
+</head>
+<body>
+    <div class="formthree ptb-100">
+        <div class="container">
+            <div id="success-message" class="alert alert-success" style="display:none;"></div>
+            <div class="row">
+                <div class="col-md-7 col-md-offset-2">
+                    <h2 class="mb-3">Formulaire d'ajout d'idée</h2>
+                    <form id="idea-form">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="sr-only">Libélle</label>
+                                    <input type="text" class="form-control" id="label" placeholder="Libélle" />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="sr-only">Categories</label>
+                                    <select id="category" class="form-control" name="category">
+                                        <option>Sélectionnez une catégorie</option>
+                                        <option value="politique">Politique</option>
+                                        <option value="sport">Sport</option>
+                                        <option value="santé">Santé</option>
+                                        <option value="education">Éducation</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="sr-only">Description</label>
+                            <textarea class="form-control" id="description" rows="7" placeholder="Description"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Ajouter</button>
+                    </form>
+                </div>
+                <div class="col-md-3">
+                    <img src="assets/idee.jpg" alt="image idée" />
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <section>
+        <h2>Liste des idées</h2>
+        <div id="ideas-list" class="card-container"></div>
+    </section>
+    <script src="script.js"></script>
+</body>
+</html>
