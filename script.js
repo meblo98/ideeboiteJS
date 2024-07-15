@@ -1,7 +1,12 @@
-// import { db, ref, push, onValue, update, remove } from './firebase.js';
+const key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ2cmt2dXl3c3lubGlrcnlzZWlsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjEwNjAyNjYsImV4cCI6MjAzNjYzNjI2Nn0.BRa3yAKTxOiMps2qZRwc1LYvjGmW3cFJXbHQe6zP56M";
+const url = "https://fvrkvuywsynlikryseil.supabase.co";
+import { createClient } from '@supabase/supabase-js';
+
+const client = createClient(url, key);
 
 const formIdee = document.getElementById("idea-form");
 const successMessage = document.getElementById("success-message");
+const errorMessage = document.getElementById("error-message");
 const listeIdee = document.getElementById("ideas-list");
 const categoryTable = [
   { value: "politique", label: "Politique" },
@@ -11,19 +16,22 @@ const categoryTable = [
 ];
 let idee = [];
 
-// Charge les données depuis Firebase
-const ideasRef = ref(db, 'ideas');
-onValue(ideasRef, (snapshot) => {
-  idee = [];
-  snapshot.forEach(childSnapshot => {
-    const childKey = childSnapshot.key;
-    const childData = childSnapshot.val();
-    idee.push({ id: childKey, ...childData });
-  });
+// Charge les données depuis Supabase
+async function loadIdeas() {
+  const { data, error } = await client
+    .from('ideas')
+    .select('*');
+  
+  if (error) {
+    console.error('Erreur de chargement des idées:', error);
+    return;
+  }
+  
+  idee = data;
   displayIdeas();
-});
+}
 
-formIdee.addEventListener("submit", (e) => {
+formIdee.addEventListener("submit", async (e) => {
   e.preventDefault();
 
   const label = document.getElementById("label").value.trim();
@@ -73,11 +81,19 @@ formIdee.addEventListener("submit", (e) => {
       status: "En attente",
     };
 
-    // Enregistrer l'idée dans Firebase
-    push(ideasRef, idea);
+    // Enregistrer l'idée dans Supabase
+    const { data, error } = await client
+      .from('ideas')
+      .insert([idea]);
 
-    displaySuccessMessage("Idée ajoutée avec succès");
-    formIdee.reset();
+    if (error) {
+      displayErrorMessage("Erreur lors de l'ajout de l'idée");
+      console.error('Erreur:', error);
+    } else {
+      displaySuccessMessage("Idée ajoutée avec succès");
+      formIdee.reset();
+      loadIdeas();  // Recharger les idées après l'ajout
+    }
   } else {
     displayErrorMessage("Veuillez remplir tous les champs correctement");
   }
@@ -91,7 +107,7 @@ descriptionInput.parentNode.appendChild(compteur);
 
 descriptionInput.addEventListener("input", () => {
   const caractere = descriptionInput.value.length;
-  compteur.textContent = `${caractere} / 256`;
+  compteur.textContent = `${caractere} / 255`;
   if (caractere > 255) {
     descriptionInput.value = descriptionInput.value.substring(0, 255);
   }
@@ -122,19 +138,27 @@ function hideError(input) {
 }
 
 function displayErrorMessage(message) {
-  errorMessage.textContent = message;
-  errorMessage.style.display = "block";
-  setTimeout(() => {
-    errorMessage.style.display = "none";
-  }, 2000);
+  if (errorMessage) {
+    errorMessage.textContent = message;
+    errorMessage.style.display = "block";
+    setTimeout(() => {
+      errorMessage.style.display = "none";
+    }, 2000);
+  } else {
+    console.error("Element error-message non trouvé");
+  }
 }
 
 function displaySuccessMessage(message) {
-  successMessage.textContent = message;
-  successMessage.style.display = "block";
-  setTimeout(() => {
-    successMessage.style.display = "none";
-  }, 2000);
+  if (successMessage) {
+    successMessage.textContent = message;
+    successMessage.style.display = "block";
+    setTimeout(() => {
+      successMessage.style.display = "none";
+    }, 2000);
+  } else {
+    console.error("Element success-message non trouvé");
+  }
 }
 
 function displayIdeas() {
@@ -174,28 +198,38 @@ function displayIdeas() {
   const deleteIcons = document.querySelectorAll(".delete-icon");
 
   approveIcons.forEach((icon) => {
-    icon.addEventListener("click", () => {
+    icon.addEventListener("click", async () => {
       const index = icon.getAttribute("data-index");
-      const ideaRef = ref(db, `ideas/${idee[index].id}`);
-      update(ideaRef, { status: "Approuvée" });
+      const { data, error } = await client
+        .from('ideas')
+        .update({ status: "Approuvée" })
+        .eq('id', idee[index].id);
+      if (!error) loadIdeas(); // Recharger les idées après la mise à jour
     });
   });
 
   disapproveIcons.forEach((icon) => {
-    icon.addEventListener("click", () => {
+    icon.addEventListener("click", async () => {
       const index = icon.getAttribute("data-index");
-      const ideaRef = ref(db, `ideas/${idee[index].id}`);
-      update(ideaRef, { status: "Désapprouvée" });
+      const { data, error } = await client
+        .from('ideas')
+        .update({ status: "Désapprouvée" })
+        .eq('id', idee[index].id);
+      if (!error) loadIdeas(); // Recharger les idées après la mise à jour
     });
   });
 
   deleteIcons.forEach((icon) => {
-    icon.addEventListener("click", () => {
+    icon.addEventListener("click", async () => {
       const index = icon.getAttribute("data-index");
-      const ideaRef = ref(db, `ideas/${idee[index].id}`);
-      remove(ideaRef);
+      const { data, error } = await client
+        .from('ideas')
+        .delete()
+        .eq('id', idee[index].id);
+      if (!error) loadIdeas(); // Recharger les idées après la suppression
     });
   });
 }
 
-displayIdeas();
+// Charger les idées au démarrage
+loadIdeas();
