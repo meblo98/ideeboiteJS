@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/meblo98/ideeboiteJS#readme",
   "dependencies": {
+    "@supabase/supabase-js": "^2.44.4",
     "fs": "^0.0.1-security",
     "http": "^0.0.1-security",
     "path": "^0.12.7"
